@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO Audit – PopName.cz | Magexo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#121212;--bg2:#1a1a1a;--bg3:#222222;--cream:#FFFFFF;--cream2:#a8a8a8;--red:#FF6B35;--blue:#4A9FD9;--gold:#FFD600;--green:#3DD39B;--purple:#B75EED;--border:rgba(255,255,255,.08);--fh:'Space Grotesk',sans-serif;--fb:'Inter',sans-serif;--ft:'Caveat',cursive}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:var(--fb);overflow-x:hidden;line-height:1.7}
+#progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--red),var(--gold),var(--blue));z-index:300;width:0;transition:width .1s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:20px 56px;background:linear-gradient(to bottom,rgba(18,18,18,.97) 60%,transparent);backdrop-filter:blur(8px)}
+.nav-logo{font-family:var(--fh);font-size:1.2rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream);text-decoration:none;font-weight:700}
+.nav-logo span{color:var(--red)}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:960px;margin:0 auto;padding:120px 56px 80px}
+h1{font-family:var(--fh);font-weight:700;font-size:clamp(2.5rem,5vw,4.5rem);line-height:.95;text-transform:uppercase;margin-bottom:16px}
+h1 .y{color:var(--red)}
+.subtitle{font-family:var(--fb);font-size:1rem;color:var(--cream2);margin-bottom:48px;font-weight:300}
+.meta{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:56px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.meta-item{font-family:var(--fb);font-size:.82rem;color:var(--cream2)}
+.meta-item strong{color:var(--cream);font-weight:600}
+
+/* Score */
+.score-hero{background:var(--red);border-radius:12px;padding:56px;margin-bottom:56px;text-align:center}
+.score-num{font-family:var(--fh);font-size:7rem;font-weight:700;color:#fff;line-height:1}
+.score-label{font-family:var(--fh);font-size:1.2rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-top:8px}
+.score-verdict{font-family:var(--fb);font-size:1.1rem;color:rgba(255,255,255,.85);margin-top:16px;font-weight:300}
+
+/* Sections */
+.section{margin-bottom:64px}
+.section-label{font-family:var(--ft);font-size:1.2rem;color:var(--red);margin-bottom:8px}
+h2{font-family:var(--fh);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;text-transform:uppercase;margin-bottom:24px;color:var(--cream)}
+h3{font-family:var(--fh);font-size:1.1rem;font-weight:700;text-transform:uppercase;margin-bottom:12px;margin-top:32px;color:var(--cream)}
+p{font-family:var(--fb);font-size:.95rem;color:var(--cream2);line-height:1.8;margin-bottom:16px;font-weight:300}
+p strong{color:var(--cream);font-weight:600}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:24px 0;font-family:var(--fb);font-size:.88rem}
+th{background:var(--bg2);color:var(--cream);font-weight:600;text-align:left;padding:14px 16px;border-bottom:2px solid var(--red);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--cream2)}
+tr:hover td{background:var(--bg2)}
+
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px;margin:24px 0}
+.card{background:var(--bg2);border:1px solid var(--border);padding:28px 24px;border-radius:8px;position:relative}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);border-radius:8px 8px 0 0}
+.card h4{font-family:var(--fh);font-size:.95rem;font-weight:700;text-transform:uppercase;color:var(--cream);margin-bottom:8px}
+.card p{font-size:.88rem;margin-bottom:0}
+.card .score-badge{display:inline-block;font-family:var(--fh);font-size:1.8rem;font-weight:700;color:var(--red);margin-bottom:8px}
+
+/* Platform scores */
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:24px 0}
+.platform-card{background:var(--bg2);border:1px solid var(--border);padding:32px 24px;border-radius:8px;text-align:center}
+.platform-card .score-badge{font-family:var(--fh);font-size:2.5rem;font-weight:700;line-height:1}
+.platform-card .label{font-family:var(--fh);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cream);margin-top:8px}
+.platform-card .desc{font-family:var(--fb);font-size:.82rem;color:var(--cream2);margin-top:8px;font-weight:300}
+
+/* Status badges */
+.status{display:inline-block;font-family:var(--fh);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700}
+.status-red{background:rgba(255,107,53,.15);color:var(--red)}
+.status-green{background:rgba(61,211,155,.15);color:var(--green)}
+.status-yellow{background:rgba(255,214,0,.15);color:var(--gold)}
+
+/* Lists */
+ul{margin:16px 0;padding-left:0;list-style:none}
+ul li{position:relative;padding-left:20px;margin-bottom:8px;font-family:var(--fb);font-size:.92rem;color:var(--cream2);font-weight:300}
+ul li::before{content:'';position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+ul li strong{color:var(--cream);font-weight:600}
+
+/* Code */
+pre{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;margin:16px 0;overflow-x:auto;font-size:.82rem;line-height:1.6;color:var(--cream2)}
+code{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.85rem}
+
+/* Impact cards */
+.impact-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);padding:24px;border-radius:0 8px 8px 0;margin:16px 0}
+.impact-card h4{font-family:var(--fh);font-size:.95rem;font-weight:700;text-transform:uppercase;color:var(--cream);margin-bottom:4px}
+.impact-card .impact-score{font-family:var(--fh);font-size:.75rem;color:var(--red);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.impact-card p{margin-bottom:0}
+
+/* CTA */
+.cta-box{background:var(--red);border-radius:12px;padding:48px;margin:56px 0;text-align:center}
+.cta-box h2{color:#fff;margin-bottom:16px}
+.cta-box p{color:rgba(255,255,255,.85);margin-bottom:0}
+
+/* Footer */
+.geo-footer{border-top:1px solid var(--border);padding-top:24px;margin-top:56px;display:flex;justify-content:space-between;font-family:var(--fb);font-size:.78rem;color:var(--cream2);opacity:.5}
+
+@media(max-width:768px){
+.container{padding:100px 24px 60px}
+nav{padding:16px 24px}
+.platform-grid{grid-template-columns:1fr}
+.card-grid{grid-template-columns:1fr}
+.score-num{font-size:5rem}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav><a class="nav-logo" href="index.html">MAG<span>EXO</span></a><a href="index.html" style="font-family:var(--fb);font-size:.78rem;color:var(--cream2);text-decoration:none;letter-spacing:.1em">&larr; Zpět na nabídku</a></nav>
+
+<div class="container">
+
+<h1>GEO AUDIT<br><span class="y">POPNAME.CZ</span></h1>
+<p class="subtitle">Kompletní audit připravenosti na generativní vyhledávání</p>
+
+<div class="meta">
+  <div class="meta-item"><strong>Datum:</strong> 2. dubna 2026</div>
+  <div class="meta-item"><strong>Web:</strong> popname.cz</div>
+  <div class="meta-item"><strong>Platforma:</strong> Orsys (migrace na Shopify)</div>
+  <div class="meta-item"><strong>Připravil:</strong> Magexo</div>
+</div>
+
+<!-- SCORE -->
+<div class="score-hero">
+  <div class="score-num">18<span style="font-size:3rem;opacity:.6">/100</span></div>
+  <div class="score-label">GEO Readiness Score</div>
+  <div class="score-verdict">Kritické nedostatky &mdash; web není připraven na AI vyhledávání</div>
+</div>
+
+<!-- SCORE BREAKDOWN -->
+<div class="section">
+  <div class="section-label">Rozklad skóre</div>
+  <h2>Kde ztrácíte body</h2>
+  <table>
+    <tr><th>Oblast</th><th>Max</th><th>Získáno</th><th>Poznámka</th></tr>
+    <tr><td>AI Crawler přístup (robots.txt)</td><td>15</td><td style="color:var(--red);font-weight:700">2</td><td>robots.txt neexistuje</td></tr>
+    <tr><td>llms.txt</td><td>10</td><td style="color:var(--red);font-weight:700">0</td><td>Soubor neexistuje</td></tr>
+    <tr><td>Strukturovaná data (Schema.org)</td><td>15</td><td style="color:var(--red);font-weight:700">0</td><td>Žádné JSON-LD ani microdata</td></tr>
+    <tr><td>Passage-level citovatelnost</td><td>15</td><td style="color:var(--gold);font-weight:700">4</td><td>Texty na kategoriích, ale nestrukturované</td></tr>
+    <tr><td>Brand mentions (externí signály)</td><td>10</td><td style="color:var(--gold);font-weight:700">3</td><td>Minimální online stopa</td></tr>
+    <tr><td>SSR a technický základ</td><td>10</td><td style="color:var(--gold);font-weight:700">5</td><td>Částečné SSR, chybí sitemap</td></tr>
+    <tr><td>Obsahová hloubka a E-E-A-T</td><td>15</td><td style="color:var(--red);font-weight:700">3</td><td>Blog bez autorů a expertního kontextu</td></tr>
+    <tr><td>FAQ a konverzační obsah</td><td>10</td><td style="color:var(--red);font-weight:700">1</td><td>FAQ obsahuje jen GDPR</td></tr>
+  </table>
+</div>
+
+<!-- PLATFORM BREAKDOWN -->
+<div class="section">
+  <div class="section-label">Platformy</div>
+  <h2>Připravenost na AI platformy</h2>
+  <div class="platform-grid">
+    <div class="platform-card">
+      <div class="score-badge" style="color:var(--red)">15<span style="font-size:1rem;opacity:.5">/100</span></div>
+      <div class="label">Google AI Overviews</div>
+      <div class="desc">Žádné schema markup, chybí sitemap.xml, generické title tagy</div>
+    </div>
+    <div class="platform-card">
+      <div class="score-badge" style="color:var(--red)">12<span style="font-size:1rem;opacity:.5">/100</span></div>
+      <div class="label">ChatGPT / SearchGPT</div>
+      <div class="desc">Chybí llms.txt, minimální externí zmínky, obsah není formátován pro extrakci</div>
+    </div>
+    <div class="platform-card">
+      <div class="score-badge" style="color:var(--gold)">20<span style="font-size:1rem;opacity:.5">/100</span></div>
+      <div class="label">Perplexity</div>
+      <div class="desc">Částečné SSR, blog s aktuálními články, ale chybí autoritativní obsah</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI CRAWLERS -->
+<div class="section">
+  <div class="section-label">AI Crawlery</div>
+  <h2>Přístup AI crawlerů</h2>
+  <p><strong>robots.txt: NEEXISTUJE (HTTP 404)</strong> &mdash; Web nemá žádnou kontrolu nad AI crawlery.</p>
+  <table>
+    <tr><th>Crawler</th><th>Vlastník</th><th>Status</th></tr>
+    <tr><td>GPTBot</td><td>OpenAI / ChatGPT</td><td><span class="status status-yellow">Neřízený</span></td></tr>
+    <tr><td>ClaudeBot</td><td>Anthropic</td><td><span class="status status-yellow">Neřízený</span></td></tr>
+    <tr><td>PerplexityBot</td><td>Perplexity</td><td><span class="status status-yellow">Neřízený</span></td></tr>
+    <tr><td>Google-Extended</td><td>Google AI</td><td><span class="status status-yellow">Neřízený</span></td></tr>
+    <tr><td>CCBot</td><td>Common Crawl</td><td><span class="status status-yellow">Neřízený</span></td></tr>
+    <tr><td>Googlebot</td><td>Google Search</td><td><span class="status status-yellow">Neřízený</span></td></tr>
+  </table>
+  <p>Absence robots.txt znamená nulovou kontrolu &mdash; nic není blokováno, ale ani nic není optimalizováno.</p>
+
+  <h3>llms.txt: <span class="status status-red">Neexistuje</span></h3>
+  <p>Soubor llms.txt umožňuje webům poskytnout AI modelům strukturovaný přehled o obsahu a značce. Pro PopName by měl obsahovat info o exkluzivitě Nike SB, produktových kategoriích a kamenné prodejně.</p>
+
+  <h3>sitemap.xml: <span class="status status-red">Neexistuje</span></h3>
+  <p>XML sitemap vrací HTTP 404 &mdash; AI crawlery nemají strukturovaný přehled stránek webu.</p>
+</div>
+
+<!-- TOP 5 CHANGES -->
+<div class="section">
+  <div class="section-label">Akční plán</div>
+  <h2>Top 5 změn s nejvyšším dopadem</h2>
+
+  <div class="impact-card">
+    <div class="impact-score">+20 bodů &middot; Kritická priorita</div>
+    <h4>1. Implementovat Schema.org markup</h4>
+    <p>Organization, LocalBusiness, Product, BreadcrumbList, WebSite &mdash; na Shopify snadno přes JSON-LD snippety nebo aplikace.</p>
+  </div>
+
+  <div class="impact-card">
+    <div class="impact-score">+15 bodů &middot; Kritická priorita</div>
+    <h4>2. Vytvořit robots.txt, sitemap.xml a llms.txt</h4>
+    <p>Shopify automaticky generuje robots.txt a sitemap.xml. Stačí přidat llms.txt s popisem značky, USP a kategorií.</p>
+  </div>
+
+  <div class="impact-card">
+    <div class="impact-score">+12 bodů &middot; Vysoká priorita</div>
+    <h4>3. Přeformátovat obsah pro AI citaci</h4>
+    <p>Definice v prvních 60 slovech sekcí, otázkové nadpisy (H2/H3), seznamy místo odstavců, self-contained bloky 134&ndash;167 slov.</p>
+  </div>
+
+  <div class="impact-card">
+    <div class="impact-score">+8 bodů &middot; Vysoká priorita</div>
+    <h4>4. Vybudovat produktové FAQ sekce</h4>
+    <p>FAQ na kategoriích i produktových stránkách &mdash; &ldquo;Jaké velikosti má Nike SB?&rdquo;, &ldquo;Jak se liší SB od běžných Nike?&rdquo; s FAQPage schema.</p>
+  </div>
+
+  <div class="impact-card">
+    <div class="impact-score">+10 bodů &middot; Střední priorita</div>
+    <h4>5. Zvýšit externí zmínky a citace</h4>
+    <p>Aktivita na Redditu, YouTube unboxingy, guest posty na streetwear webech, aktualizace profilů na Firmy.cz a Heureka.</p>
+  </div>
+</div>
+
+<!-- SCHEMA RECOMMENDATIONS -->
+<div class="section">
+  <div class="section-label">Schema.org</div>
+  <h2>Doporučené schema typy</h2>
+  <div class="card-grid">
+    <div class="card"><h4>Organization</h4><p>Hlavní entita &mdash; název, logo, kontakty, sameAs (sociální sítě, Wikidata)</p></div>
+    <div class="card"><h4>LocalBusiness / Store</h4><p>Prodejna Praha-Letná &mdash; adresa, otevírací doba, telefon</p></div>
+    <div class="card"><h4>Product + Offer</h4><p>Každý produkt &mdash; název, značka, cena, dostupnost, obrázky</p></div>
+    <div class="card"><h4>BreadcrumbList</h4><p>Navigační drobečky &mdash; Google AIO je využívá pro kontext</p></div>
+    <div class="card"><h4>WebSite + SearchAction</h4><p>Sitelinks search box v Google &mdash; zvyšuje viditelnost značky</p></div>
+    <div class="card"><h4>FAQPage</h4><p>Produktové a kategoriové FAQ &mdash; AI modely citují FAQ bloky</p></div>
+  </div>
+  <p style="margin-top:16px">Na <strong>Shopify</strong> implementovatelné přes nativní Liquid snippety nebo aplikace JSON-LD for SEO / Smart SEO.</p>
+</div>
+
+<!-- CONTENT SUGGESTIONS -->
+<div class="section">
+  <div class="section-label">Obsahová doporučení</div>
+  <h2>Jak přeformátovat obsah</h2>
+
+  <h3>Kategoriové stránky</h3>
+  <p><strong>Aktuální stav (Nike SB):</strong> Jeden dlouhý odstavec textu bez struktury.</p>
+  <p><strong>Doporučený formát:</strong></p>
+  <ul>
+    <li>Podnadpisy s otázkami (&ldquo;Co je Nike SB?&rdquo;, &ldquo;Proč nakupovat v PopName?&rdquo;)</li>
+    <li>Definice v prvních 60 slovech &mdash; snadno citovatelné pasáže</li>
+    <li>Seznamy nejpopulárnějších modelů</li>
+    <li>Velikostní tabulky se strukturovanými daty</li>
+  </ul>
+
+  <h3>Blog &rarr; Knowledge Hub</h3>
+  <ul>
+    <li>Ke každému dropu přidat sekci &ldquo;Co je [značka/model]?&rdquo;</li>
+    <li>Přidat jméno autora (E-E-A-T signál)</li>
+    <li>Interní odkazy na produkty</li>
+    <li>Tagy a kategorie pro interlinking</li>
+  </ul>
+
+  <h3>Produktové stránky</h3>
+  <ul>
+    <li>2&ndash;3 věty unikátního popisu (ne jen parametry)</li>
+    <li>Sekce &ldquo;Proč si vybrat tento model&rdquo; s 3 bullet pointy</li>
+    <li>Doporučení velikosti specificky pro daný model</li>
+    <li>Related products s kontextem</li>
+  </ul>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+  <h2 style="font-size:1.8rem">Migrace na Shopify = ideální příležitost</h2>
+  <p>Shopify automaticky řeší robots.txt, sitemap.xml a nabízí nativní nástroje pro schema markup. <strong>Očekávaný posun: z 18/100 na 65&ndash;75/100.</strong></p>
+</div>
+
+<div class="geo-footer">
+  <div>Audit připravil: Magexo (Shopify Partner)</div>
+  <div>2. dubna 2026</div>
+</div>
+
+</div>
+
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;const p=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;document.getElementById('progress').style.width=p+'%'});
+</script>
+</body>
+</html>
